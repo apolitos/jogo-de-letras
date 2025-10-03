@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo Educativo de Letras</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(to right, #74ebd5, #9face6);
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #222;
+      margin-bottom: 10px;
+    }
+    #game {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+    .word {
+      font-size: 2em;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+    input {
+      padding: 10px;
+      font-size: 1em;
+      text-align: center;
+      width: 80px;
+      border-radius: 8px;
+      border: 2px solid #666;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1em;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    #message {
+      font-size: 1.2em;
+      margin: 15px 0;
+    }
+    #score {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎮 Jogo Educativo de Letras 🎮</h1>
+  <div id="game">
+    <p><b>Complete a palavra com a letra que falta!</b></p>
+    <p id="category"></p>
+    <div class="word" id="word">_</div>
+    <input type="text" id="answer" maxlength="1" placeholder="Letra">
+    <br>
+    <button onclick="checkAnswer()">Responder</button>
+    <p id="message"></p>
+    <p id="score">Pontuação: 0</p>
+  </div>
+
+  <script>
+    const categorias = {
+      "Animais": ["CAVALO","GATO","SAPO","PEIXE","CACHORRO","TARTARUGA","LEAO","COBRA","JACARE","ZEBRA","URSO","MACACO","ELEFANTE"],
+      "Frutas": ["MANGA","BANANA","UVA","PERA","ABACAXI","MORANGO","LARANJA","MELANCIA","CEREJA","COCO","AMORA","CAQUI","ABACATE"],
+      "Objetos": ["BOLA","CADEIRA","MESA","CARRO","LIVRO","CELULAR","TESOURA","MOCHILA","CADERNO","COMPUTADOR","TELEVISAO","LAPIS","CANETA"],
+      "Natureza": ["FLOR","LUA","SOL","ESTRELA","RIO","NUVEM","TERRA","MAR","AREIA","VENTO","ARVORE","FOLHA","CHUVA"],
+      "Cores": ["AZUL","VERMELHO","VERDE","AMARELO","ROSA","PRETO","BRANCO","CINZA","LARANJA","ROXO","MARROM"],
+      "Comidas": ["ARROZ","FEIJAO","PIZZA","PAO","BOLO","SOPA","CARNE","QUEIJO","SORVETE","BISCOITO","CHOCOLATE"]
+    };
+
+    let score = 0;
+    let rodada = 0;
+    let rodadaMax = 8;
+    let currentWord, missingLetter, currentCategory;
+
+    function newRound() {
+      rodada++;
+      if (rodada > rodadaMax) {
+        document.getElementById("word").innerText = "🏆 Fim do jogo!";
+        document.getElementById("category").innerText = "";
+        document.getElementById("message").innerText = "Sua pontuação final: " + score;
+        document.getElementById("answer").style.display = "none";
+        return;
+      }
+
+      // escolher categoria e palavra
+      const catKeys = Object.keys(categorias);
+      currentCategory = catKeys[Math.floor(Math.random() * catKeys.length)];
+      const words = categorias[currentCategory];
+      currentWord = words[Math.floor(Math.random() * words.length)];
+
+      // escolher letra para esconder
+      let pos = Math.floor(Math.random() * currentWord.length);
+      missingLetter = currentWord[pos];
+      let wordWithBlank = currentWord.substring(0, pos) + "_" + currentWord.substring(pos+1);
+
+      // atualizar tela
+      document.getElementById("category").innerText = "Categoria: " + currentCategory;
+      document.getElementById("word").innerText = wordWithBlank;
+      document.getElementById("message").innerText = "";
+      document.getElementById("answer").value = "";
+      document.getElementById("answer").focus();
+    }
+
+    function checkAnswer() {
+      let resposta = document.getElementById("answer").value.toUpperCase();
+      if (resposta === missingLetter) {
+        document.getElementById("message").innerText = "✅ Acertou!";
+        score += 2;
+      } else {
+        document.getElementById("message").innerText = "❌ Errado! A letra era: " + missingLetter + " (Palavra: " + currentWord + ")";
+      }
+      document.getElementById("score").innerText = "Pontuação: " + score;
+      setTimeout(newRound, 1500);
+    }
+
+    // começar o jogo
+    newRound();
+  </script>
+</body>
+</html>
